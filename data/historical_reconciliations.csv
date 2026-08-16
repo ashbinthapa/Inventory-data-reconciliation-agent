@@ -1,0 +1,6 @@
+sku,inventory_abs_error,warehouse_abs_error
+SKU-1001,2,3
+SKU-1002,8,2
+SKU-1003,1,1
+SKU-1002,6,3
+SKU-1001,1,2

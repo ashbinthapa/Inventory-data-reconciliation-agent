@@ -1,0 +1,4 @@
+sku,quantity,reported_at,warehouse_id,record_status
+SKU-1001,110,2026-08-15T08:00:00Z,WH-01,verified
+SKU-1002,60,2026-08-15T09:00:00Z,WH-01,verified
+SKU-1003,12,2026-08-15T09:00:00Z,WH-01,verified
