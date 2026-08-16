@@ -1,4 +1,4 @@
-# LEC AI – Inventory Conflict Resolution Agent
+# AI – Inventory Conflict Resolution Agent
 
 A small, auditable agent that reconciles a live inventory system with a weekly warehouse feed. When the two sources disagree, it gathers contextual evidence, ranks source credibility, explains the ranking, and chooses a conservative action.
 
@@ -111,21 +111,3 @@ With more time I would:
 - add a human feedback loop so reviewer decisions improve historical-accuracy estimates;
 - isolate test state so `test_agent.py` doesn't depend on `INVENTORY` being unmutated (e.g. reset the dict in a fixture, or inject inventory state instead of importing a module-level global);
 - add an LLM only for evidence summarisation / operator explanations, with the deterministic policy remaining the gatekeeper.
-
-## Important design limitation
-
-The demo data is synthetic and the inventory API is stubbed. The purpose is to demonstrate the engineering pattern, not claim that these thresholds are suitable for a real warehouse without validation.
-
-## Suggested 3-minute video script
-
-**0:00–0:20 — Problem.** "I built an auditable reconciliation agent. It compares a live inventory source with a weekly warehouse feed and only auto-corrects when confidence is high."
-
-**0:20–0:45 — Architecture.** Show `app/agent.py`, `app/scoring.py`, and the three data files. Point out that the decision is deterministic and that the evidence is logged.
-
-**0:45–1:40 — Run the scenario.** Run `python run_demo.py --sku SKU-1002`. Pause on the 50 vs 60 discrepancy, then the four scores and 94 vs 35.5 ranking.
-
-**1:40–2:15 — Defend the judgement.** Explain: warehouse is newer, has better historical error, transactions reconcile close to 60, and its metadata is verified. The 20% discrepancy is within the automatic-correction ceiling and the score gap is 58.5 points.
-
-**2:15–2:40 — Show auditability.** Open `decision_log.jsonl` and show the pre-action decision record, then the post-action record.
-
-**2:40–3:00 — Reversal / edge case.** Explain that a score gap below 8, confidence below 55, or discrepancy above 50% escalates; a 20% discrepancy is the maximum for auto-correction. Mention that production thresholds should be calibrated from real incidents.
