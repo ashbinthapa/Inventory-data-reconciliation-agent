@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # LEC AI – Inventory Conflict Resolution Agent
 
 A small, auditable agent that reconciles a live inventory system with a weekly warehouse feed. When the two sources disagree, it gathers contextual evidence, ranks source credibility, explains the ranking, and chooses a conservative action.
@@ -36,7 +35,7 @@ After scoring, the agent calculates the confidence gap between the top-ranked so
 
 - `AUTO_CORRECT`: winning source score >= 75, confidence gap >= 15, and discrepancy <= 20% of the current inventory value.
 - `MANUAL_REVIEW`: winning source score >= 65 but the automatic correction criteria are not met.
-- `ESCALATE`: low absolute confidence, a large discrepancy (>50%), or nearly tied sources (gap < 8).
+- `ESCALATE`: low absolute confidence (top score < 55), a large discrepancy (>50%), or nearly tied sources (gap < 8).
 
 When the **warehouse feed** wins, `AUTO_CORRECT` updates the live inventory record to the warehouse quantity. When the **inventory system** wins, the agent does not blindly rewrite it; it records the warehouse value as stale/conflicting and recommends follow-up. This is safer than changing a live value just to make two systems agree.
 
@@ -57,7 +56,7 @@ Requires Python 3.10+.
 
 ```bash
 python -m venv .venv
-# Windows PowerShell: .venv\\Scripts\\Activate.ps1
+# Windows PowerShell: .venv\Scripts\Activate.ps1
 # macOS/Linux: source .venv/bin/activate
 pip install -r requirements.txt
 python -m app.agent
@@ -76,6 +75,8 @@ Then visit `http://127.0.0.1:8000/inventory/SKU-1002`.
 ```bash
 pytest -q
 ```
+
+Note: `tests/test_agent.py` runs the real `reconcile()` flow, which mutates the in-memory `INVENTORY` dict when it auto-corrects. Run the suite in a fresh process (as `pytest` does by default) rather than re-invoking `reconcile("SKU-1002")` multiple times in the same session, or the "before" quantity will no longer be 50.
 
 ## Repository structure
 
@@ -108,6 +109,7 @@ With more time I would:
 - calibrate thresholds from real incident data instead of hand-picked demo values;
 - monitor false corrections, review rates and source drift;
 - add a human feedback loop so reviewer decisions improve historical-accuracy estimates;
+- isolate test state so `test_agent.py` doesn't depend on `INVENTORY` being unmutated (e.g. reset the dict in a fixture, or inject inventory state instead of importing a module-level global);
 - add an LLM only for evidence summarisation / operator explanations, with the deterministic policy remaining the gatekeeper.
 
 ## Important design limitation
@@ -116,18 +118,14 @@ The demo data is synthetic and the inventory API is stubbed. The purpose is to d
 
 ## Suggested 3-minute video script
 
-**0:00–0:20 — Problem.** “I built an auditable reconciliation agent. It compares a live inventory source with a weekly warehouse feed and only auto-corrects when confidence is high.”
+**0:00–0:20 — Problem.** "I built an auditable reconciliation agent. It compares a live inventory source with a weekly warehouse feed and only auto-corrects when confidence is high."
 
 **0:20–0:45 — Architecture.** Show `app/agent.py`, `app/scoring.py`, and the three data files. Point out that the decision is deterministic and that the evidence is logged.
 
 **0:45–1:40 — Run the scenario.** Run `python run_demo.py --sku SKU-1002`. Pause on the 50 vs 60 discrepancy, then the four scores and 94 vs 35.5 ranking.
 
-**1:40–2:15 — Defend the judgement.** Explain: warehouse is newer, has better historical error, transactions reconcile to 60, and its metadata is verified. The 20% discrepancy is within the automatic-correction ceiling and the score gap is 58.5 points.
+**1:40–2:15 — Defend the judgement.** Explain: warehouse is newer, has better historical error, transactions reconcile close to 60, and its metadata is verified. The 20% discrepancy is within the automatic-correction ceiling and the score gap is 58.5 points.
 
 **2:15–2:40 — Show auditability.** Open `decision_log.jsonl` and show the pre-action decision record, then the post-action record.
 
 **2:40–3:00 — Reversal / edge case.** Explain that a score gap below 8, confidence below 55, or discrepancy above 50% escalates; a 20% discrepancy is the maximum for auto-correction. Mention that production thresholds should be calibrated from real incidents.
-=======
-# Inventory-data-reconciliation-agent
-A Python agent, with a reconciliation scenario, credible-source ranking, and decision logic that hits three outcomes "auto-correct, flag and escalate".
->>>>>>> 6d21a5e83b896bb6ad7b703ac962d3fa99477183
