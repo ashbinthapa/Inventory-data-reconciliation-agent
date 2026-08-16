@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # LEC AI – Inventory Conflict Resolution Agent
 
 A small, auditable agent that reconciles a live inventory system with a weekly warehouse feed. When the two sources disagree, it gathers contextual evidence, ranks source credibility, explains the ranking, and chooses a conservative action.
@@ -126,3 +127,7 @@ The demo data is synthetic and the inventory API is stubbed. The purpose is to d
 **2:15–2:40 — Show auditability.** Open `decision_log.jsonl` and show the pre-action decision record, then the post-action record.
 
 **2:40–3:00 — Reversal / edge case.** Explain that a score gap below 8, confidence below 55, or discrepancy above 50% escalates; a 20% discrepancy is the maximum for auto-correction. Mention that production thresholds should be calibrated from real incidents.
+=======
+# Inventory-data-reconciliation-agent
+A Python agent, with a reconciliation scenario, credible-source ranking, and decision logic that hits three outcomes "auto-correct, flag and escalate".
+>>>>>>> 6d21a5e83b896bb6ad7b703ac962d3fa99477183
